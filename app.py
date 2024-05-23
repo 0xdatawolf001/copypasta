@@ -62,8 +62,10 @@ def main():
                 if (navigator.clipboard) {{
                     navigator.clipboard.writeText(text).then(function() {{
                         console.log('Text copied to clipboard');
+                        alert('Text copied to clipboard!');
                     }}, function(err) {{
                         console.error('Could not copy text: ', err);
+                        alert('Failed to copy text.');
                     }});
                 }} else {{
                     var textArea = document.createElement("textarea");
@@ -74,8 +76,10 @@ def main():
                     try {{
                         document.execCommand('copy');
                         console.log('Text copied to clipboard');
+                        alert('Text copied to clipboard!');
                     }} catch (err) {{
                         console.error('Could not copy text: ', err);
+                        alert('Failed to copy text.');
                     }}
                     document.body.removeChild(textArea);
                 }}
