@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from bs4 import BeautifulSoup
+from beautifulsoup4 import BeautifulSoup
 import pyperclip  # Install with: pip install pyperclip
 
 # Function to extract text from a webpage
