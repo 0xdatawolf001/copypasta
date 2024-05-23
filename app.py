@@ -13,7 +13,7 @@ def extract_text_from_website(url):
 # Streamlit app
 def main():
     st.title("Copy Pasta 🍝")
-    st.subheader("Paste Link, Get Text, Copy Them At A Go")
+    st.subheader("Paste Link, Get Text, One Click Copy. No more max main text highlighting")
     if 'extracted_text' not in st.session_state:
         st.session_state['extracted_text'] = ''
     url = st.text_input("Enter the URL of the website:")
@@ -30,9 +30,38 @@ def main():
         else:
             st.warning("Please enter a URL.")
 
-    if st.session_state['extracted_text']:
-        st.text_area("Copy the text below:", value=st.session_state['extracted_text'], height=400)
-        st.info("Select the text above and copy it manually.")
+    if st.button("Copy to Clipboard"):
+        st.markdown(
+            f"""
+            <script>
+            function copyToClipboard(text) {{
+                if (navigator.clipboard) {{
+                    navigator.clipboard.writeText(text).then(function() {{
+                        console.log('Text copied to clipboard');
+                    }}, function(err) {{
+                        console.error('Could not copy text: ', err);
+                    }});
+                }} else {{
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {{
+                        document.execCommand('copy');
+                        console.log('Text copied to clipboard');
+                    }} catch (err) {{
+                        console.error('Could not copy text: ', err);
+                    }}
+                    document.body.removeChild(textArea);
+                }}
+            }}
+            copyToClipboard(`{st.session_state['extracted_text']}`);
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
+        st.success("Text copied to clipboard!")
 
 if __name__ == "__main__":
     main()
