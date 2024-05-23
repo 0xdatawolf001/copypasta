@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
-import pyperclip  # Install with: pip install pyperclip
 
 # Function to extract text from a webpage
 def extract_text_from_website(url):
@@ -13,7 +12,8 @@ def extract_text_from_website(url):
 
 # Streamlit app
 def main():
-    st.title("Webpage Text Extractor and Copier")
+    st.title("Copy Pasta 🍝")
+    st.subheader("Paste Link, Get Text, Copy Them At A Go")
     if 'extracted_text' not in st.session_state:
         st.session_state['extracted_text'] = ''
     url = st.text_input("Enter the URL of the website:")
@@ -30,12 +30,9 @@ def main():
         else:
             st.warning("Please enter a URL.")
 
-    if st.button("Copy to Clipboard"):
-        try:
-            pyperclip.copy(st.session_state['extracted_text'])
-            st.success("Text copied to clipboard!")
-        except:
-            st.error("Sorry, unable to copy the text. Please try again.")
+    if st.session_state['extracted_text']:
+        st.text_area("Copy the text below:", value=st.session_state['extracted_text'], height=400)
+        st.info("Select the text above and copy it manually.")
 
 if __name__ == "__main__":
     main()
