@@ -36,7 +36,7 @@ def main():
             st.warning("Please enter a URL.")
     
     # Toggle button for prefix paragraph
-    add_prefix = st.checkbox("Add Prefix Paragraph")
+    add_prefix = st.checkbox("Add Prefix Prompt Paragraph")
     
     # Default prefix paragraph text
     default_prefix = ("Extract the key insights and takeaways. Write in point form and organize section in headers. "
