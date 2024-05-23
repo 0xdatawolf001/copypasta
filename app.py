@@ -1,5 +1,3 @@
-pip install beautifulsoup4
-pip install pyperclip
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
