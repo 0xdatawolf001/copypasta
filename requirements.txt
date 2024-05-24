@@ -8,4 +8,4 @@ pytesseract
 PyPDF2
 tesseract
 tesseract-ocr
-pillow
+Pillow
