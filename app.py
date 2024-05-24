@@ -80,17 +80,13 @@ else:
 
     if uploaded_pdf:
         # Option to select specific pages or extract all text
-        all_pages = st.checkbox("Extract all pages")
-        if not all_pages:
-            page_range = st.text_input("Enter page range (e.g., 1-3 for pages 1 to 3):")
-            if page_range:
-                try:
-                    start_page, end_page = map(int, page_range.split('-'))
-                    pages = list(range(start_page - 1, end_page))  # Adjust for zero-based indexing
-                except ValueError:
-                    st.error("Invalid page range format. Please use the format 'start-end'.")
-                    pages = None
-            else:
+        page_range = st.text_input("Enter page range (e.g., 1-3 for pages 1 to 3):")
+        if page_range:
+            try:
+                start_page, end_page = map(int, page_range.split('-'))
+                pages = list(range(start_page - 1, end_page))  # Adjust for zero-based indexing
+            except ValueError:
+                st.error("Invalid page range format. Please use the format 'start-end'.")
                 pages = None
         else:
             pages = None
@@ -105,22 +101,18 @@ else:
 if 'main_text' in st.session_state:
     st.text_area("Extracted Text:", st.session_state['main_text'], height=300)
 
-# Checkbox for adding prefix
-add_prefix = st.checkbox("Add Prefix Prompt Paragraph")
-
 # Default prefix text
 default_prefix = ("Extract the key insights and takeaways. Write in point form and organize section in headers. "
                   "Make sure it is comprehensive and complete and you don’t lose out important information. "
                   "At the end, have a call to action on the next steps based on what the write up suggests.")
 
-# Text area for prefix if checkbox is checked
-if add_prefix:
-    prefix_text = st.text_area("Prefix Text:", default_prefix, height=100)
-    
-    # Button to refresh and add prefix to main text
-    if st.button("Refresh with Prefix"):
-        if 'main_text' in st.session_state:
-            st.session_state['main_text_with_prefix'] = prefix_text + "\n\n" + st.session_state['main_text']
+# Text area for prefix
+prefix_text = st.text_area("Prefix Text:", default_prefix, height=100)
+
+# Button to refresh and add prefix to main text
+if st.button("Refresh with Prefix"):
+    if 'main_text' in st.session_state:
+        st.session_state['main_text_with_prefix'] = prefix_text + "\n\n" + st.session_state['main_text']
 else:
     # If the prefix is removed, revert to the original text
     if 'main_text' in st.session_state:
