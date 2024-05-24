@@ -3,14 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from st_copy_to_clipboard import st_copy_to_clipboard
-from PIL import Image
-import pytesseract
-import io
 from PyPDF2 import PdfReader
-from PIL import Image
-import streamlit as st
-
-
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -30,12 +23,6 @@ def extract_text_from_url(url):
         return text
     else:
         return "No main body text found."
-
-# Function to extract text from an uploaded image
-def extract_text_from_image(image):
-    img = Image.open(image)
-    text = pytesseract.image_to_string(img)
-    return text
 
 # Function to extract text from a PDF file
 def extract_text_from_pdf(pdf_file, pages=None):
@@ -82,9 +69,8 @@ elif mode == "Image Upload":
     # Button to extract text from image
     if st.button("Extract Text from Image"):
         if uploaded_image:
-            main_text = extract_text_from_image(uploaded_image)
-            st.session_state['main_text'] = main_text
-            st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+            st.session_state['main_text'] = "Image OCR functionality has been removed."
+            st.session_state['main_text_with_prefix'] = "Image OCR functionality has been removed."
         else:
             st.session_state['main_text'] = "Please upload a valid image."
             st.session_state['main_text_with_prefix'] = "Please upload a valid image."
