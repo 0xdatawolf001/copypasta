@@ -8,7 +8,6 @@ import pytesseract
 import io
 from PyPDF2 import PdfReader
 from PIL import Image
-import shutil 
 import streamlit as st
 
 
