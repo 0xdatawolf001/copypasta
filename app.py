@@ -30,7 +30,7 @@ st.subheader("No more painful text highlighting. Copy text from long articles wi
 st.write("""
 1) Enter a URL
 2) Extract the text 
-3) Add prefix if you want to use it for prompting (use mine if you want to for summary)
+3) Add prefix (prompt) if you want to use it for prompting (use mine if you want to for summary)
 """)
 
 # Input box for URL
@@ -49,7 +49,7 @@ if 'main_text' in st.session_state:
     st.text_area("Extracted Text:", st.session_state['main_text'], height=300)
 
 # Checkbox for adding prefix
-add_prefix = st.checkbox("Add Prefix Paragraph")
+add_prefix = st.checkbox("Add Prefix Prompt Paragraph")
 
 # Default prefix text
 default_prefix = ("Extract the key insights and takeaways. Write in point form and organize section in headers. "
