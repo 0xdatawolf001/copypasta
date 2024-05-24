@@ -8,6 +8,7 @@ import pytesseract
 import io
 from PyPDF2 import PdfReader
 
+# Set the path to the Tesseract executable
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 # Function to extract main body text from a URL
