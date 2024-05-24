@@ -8,6 +8,8 @@ import pytesseract
 import io
 from PyPDF2 import PdfReader
 
+pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
     response = requests.get(url)
