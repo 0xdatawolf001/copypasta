@@ -9,4 +9,3 @@ PyPDF2
 tesseract
 tesseract-ocr
 pillow
-cv2
