@@ -1,8 +1,8 @@
 import streamlit as st
 from bs4 import BeautifulSoup
 import requests
-import pyperclip
 import re
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -72,11 +72,9 @@ if 'main_text_with_prefix' in st.session_state:
     st.text_area("Text with Prefix:", st.session_state['main_text_with_prefix'], height=300)
 
 # Button to copy text to clipboard
-if st.button("Copy to Clipboard"):
-    if 'main_text_with_prefix' in st.session_state:
-        pyperclip.copy(st.session_state['main_text_with_prefix'])
-    elif 'main_text' in st.session_state:
-        pyperclip.copy(st.session_state['main_text'])
-    st.success("Text copied to clipboard!")
+if 'main_text_with_prefix' in st.session_state:
+    st_copy_to_clipboard(st.session_state['main_text_with_prefix'])
+elif 'main_text' in st.session_state:
+    st_copy_to_clipboard(st.session_state['main_text'])
 
 st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
