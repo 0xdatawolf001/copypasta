@@ -79,4 +79,4 @@ if st.button("Copy to Clipboard"):
         pyperclip.copy(st.session_state['main_text'])
     st.success("Text copied to clipboard!")
 
-st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text to be added into prompting on Mobile")
+st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
