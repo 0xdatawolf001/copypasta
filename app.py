@@ -1,8 +1,8 @@
-# import streamlit as st
-# from bs4 import BeautifulSoup
-# import requests
-# import re
-# from st_copy_to_clipboard import st_copy_to_clipboard
+import streamlit as st
+from bs4 import BeautifulSoup
+import requests
+import re
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 # # Function to extract main body text from a URL
 # def extract_text_from_url(url):
@@ -84,6 +84,8 @@
 #     st_copy_to_clipboard(st.session_state['main_text'])
 
 # st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")import streamlit as st
+
+import streamlit as st
 from PyPDF2 import PdfReader
 from st_copy_to_clipboard import st_copy_to_clipboard
 
