@@ -25,7 +25,7 @@ def extract_text_from_url(url):
 
 # Streamlit app
 st.title("Copy Pasta 🍝")
-st.subheader("No more painful text highlighting. Copy text from long articles with a few clicks")
+st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
 
 st.write("""
 1) Enter a URL
@@ -41,8 +41,10 @@ if st.button("Extract Text"):
     if url:
         main_text = extract_text_from_url(url)
         st.session_state['main_text'] = main_text
+        st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
     else:
         st.session_state['main_text'] = "Please enter a valid URL."
+        st.session_state['main_text_with_prefix'] = "Please enter a valid URL."
 
 # Display extracted text
 if 'main_text' in st.session_state:
@@ -64,12 +66,16 @@ if add_prefix:
     if st.button("Refresh with Prefix"):
         if 'main_text' in st.session_state:
             st.session_state['main_text_with_prefix'] = prefix_text + "\n\n" + st.session_state['main_text']
-        else:
-            st.session_state['main_text_with_prefix'] = prefix_text
+else:
+    # If the prefix is removed, revert to the original text
+    if 'main_text' in st.session_state:
+        st.session_state['main_text_with_prefix'] = st.session_state['main_text']
+        if 'main_text_with_prefix' in st.session_state:
+            del st.session_state['main_text_with_prefix']
 
 # Display text with prefix if available
 if 'main_text_with_prefix' in st.session_state:
-    st.text_area("Text with Prefix:", st.session_state['main_text_with_prefix'], height=300)
+    st.text_area("Text with Prefix (Prompt):", st.session_state['main_text_with_prefix'], height=300)
 
 # Button to copy text to clipboard
 if 'main_text_with_prefix' in st.session_state:
