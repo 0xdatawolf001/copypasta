@@ -6,3 +6,4 @@ bs4
 st_copy_to_clipboard
 pytesseract
 PyPDF2
+tesseract-ocr
