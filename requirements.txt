@@ -7,3 +7,5 @@ st_copy_to_clipboard
 pytesseract
 PyPDF2
 tesseract
+tesseract-ocr
+tesseract-ocr-por
