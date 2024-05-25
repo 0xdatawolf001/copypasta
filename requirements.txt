@@ -11,3 +11,4 @@ pillow
 Pillow
 numpy
 youtube-transcript-api
+urllib
