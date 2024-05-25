@@ -10,6 +10,32 @@ from easyocr import Reader
 import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
+from youtube_transcript_api import YouTubeTranscriptApi
+import toml
+
+# Function to read the API key from secrets.toml
+def get_api_key(file_path="notes.toml"):
+    with open(file_path, "r") as f:
+        config = toml.load(f)
+    return config["api_keys"]["youtube"]
+
+# Function to extract YouTube video ID from URL
+def extract_video_id(url):
+    match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
+    if match:
+        return match.group(1)
+    return None
+
+# Function to extract transcript from a YouTube video
+def extract_youtube_transcript(video_id):
+    try:
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = ' '.join([d['text'] for d in transcript_list])
+        return transcript
+    except Exception as e:
+        st.error(f"Error extracting YouTube transcript: {e}")
+        return None
+
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -143,9 +169,16 @@ elif option == "Website Links":
     # Button to extract text
     if st.button("Extract Text"):
         if url:
-            main_text = extract_text_from_url(url)
-            st.session_state['main_text'] = main_text
-            st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+            # Check if it's a YouTube link
+            video_id = extract_video_id(url) 
+            if video_id:
+                main_text = extract_youtube_transcript(video_id)
+            else:
+                main_text = extract_text_from_url(url)
+            
+            if main_text:
+                st.session_state['main_text'] = main_text
+                st.session_state['main_text_with_prefix'] = main_text 
         else:
             st.session_state['main_text'] = "Please enter a valid URL."
             st.session_state['main_text_with_prefix'] = "Please enter a valid URL."

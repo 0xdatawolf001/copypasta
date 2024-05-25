@@ -10,3 +10,4 @@ easyocr
 pillow
 Pillow
 numpy
+youtube-transcript-api
