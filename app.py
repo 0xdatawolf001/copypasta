@@ -21,7 +21,8 @@ def get_api_key(file_path="notes.toml"):
 
 # Function to extract YouTube video ID from URL
 def extract_video_id(url):
-    match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url)
+    # Check for YouTube specific patterns:
+    match = re.search(r'^(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:watch\?v=|embed\/|v\/)([a-zA-Z0-9_-]{11})', url)
     if match:
         return match.group(1)
     return None
