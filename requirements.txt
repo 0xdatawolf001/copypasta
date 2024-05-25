@@ -5,7 +5,7 @@ beautifulsoup4
 bs4
 st_copy_to_clipboard
 PyPDF2
-fitz
+PyMuPDF
 easyocr
 pillow
 Pillow
