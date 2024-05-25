@@ -23,6 +23,7 @@ def extract_text_from_url(url):
     else:
         return "No main body text found."
 
+
 # Streamlit app
 st.title("Copy Pasta 🍝")
 st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
