@@ -86,3 +86,4 @@ elif 'main_text' in st.session_state:
 
 st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
 
+
