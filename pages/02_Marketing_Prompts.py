@@ -283,5 +283,5 @@ if 'main_text_2' in st.session_state:
         st.text_area("LLM Output:", llm_response, height=500)
 
 st.write("""
-         This is a simple app that literally copies everything on the page so that it is easier to copy large amounts of text for prompting on Mobile
+         This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow
          """)
