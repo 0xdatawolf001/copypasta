@@ -98,16 +98,16 @@ def extract_text_from_image(image_bytes):
 
 # Streamlit app
 st.title("Copy Pasta 🍝")
-st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
+st.subheader("Copy text from articles, PDFs, and images for LLM prompting with one click")
 
 st.write("""
-1) Enter a URL or upload a PDF or Image
+1) Enter a URL, upload a PDF or Image
 2) Extract the text 
-3) Add prefix (prompt) if you want to use it for prompting (use mine if you want to for summary)
+3) Add a prompt if you want to instruct an LLM model
 """)
 
 # Option to choose between URL, PDF, and Image
-option = st.radio("Choose input type:", ("URL", "PDF", "Image"))
+option = st.radio("## Choose input type:", ("URL", "PDF", "Image"))
 
 if option == "PDF":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
