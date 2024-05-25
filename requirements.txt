@@ -10,5 +10,4 @@ easyocr
 pillow
 Pillow
 PyMuPDF
-frontend
 numpy
