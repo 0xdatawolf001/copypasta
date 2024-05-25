@@ -191,7 +191,6 @@ from easyocr import Reader
 from PIL import Image
 import numpy as np
 import fitz 
-import PyMuPDF
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
