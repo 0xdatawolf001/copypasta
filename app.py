@@ -78,7 +78,7 @@ def extract_text_from_image(image_file):
 # Streamlit app
 st.title("Copy Pasta 🍝")
 st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
-
+st.write("This is a simple app that copies text from the upload files or URL so that it is easier to copy large amount of text for prompting. It is not a LLM")
 st.write("""
 1) Enter a URL or upload a PDF or Image
 2) Extract the text 
