@@ -7,6 +7,9 @@ import PyPDF2
 import io
 import base64
 from easyocr import Reader
+import fitz  # PyMuPDF
+from PIL import Image
+import numpy as np
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -44,7 +47,41 @@ def extract_text_from_pdf(pdf_reader, start_page, end_page):
     text = ""
     for page_num in range(start_page, end_page + 1):
         page = pdf_reader.pages[page_num]
-        text += page.extract_text() + "\n"
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text + "\n"
+        else:
+            # If no text is found, convert the page to an image and use OCR
+            ocr_text = extract_text_from_pdf_image(pdf_reader, page_num)
+            if ocr_text:
+                text += ocr_text + "\n"
+    
+    return text
+
+# Function to extract text from a PDF page image using OCR
+def extract_text_from_pdf_image(pdf_reader, page_num):
+    pdf_page = pdf_reader.pages[page_num]
+    pdf_bytes = io.BytesIO()
+    pdf_writer = PyPDF2.PdfWriter()
+    pdf_writer.add_page(pdf_page)
+    pdf_writer.write(pdf_bytes)
+    pdf_bytes.seek(0)
+    
+    # Use PyMuPDF to convert PDF page to image
+    doc = fitz.open(stream=pdf_bytes.read(), filetype="pdf")
+    page = doc.load_page(0)  # Load the first page
+    pix = page.get_pixmap()
+    image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    
+    # Downsize the image to reduce memory usage
+    image = image.resize((image.width // 2, image.height // 2))
+    
+    # Convert image to bytes
+    img_byte_arr = io.BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr = img_byte_arr.getvalue()
+    
+    text = extract_text_from_image(img_byte_arr)
     
     return text
 
@@ -68,11 +105,10 @@ def display_pdf_pages(pdf_file, start_page, end_page):
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # Function to extract text from an image using EasyOCR
-def extract_text_from_image(image_file):
+def extract_text_from_image(image_bytes):
     reader = Reader(['en'], gpu=False) # change language if needed
     try:
-        image = image_file.read()
-        result = reader.readtext(image)
+        result = reader.readtext(image_bytes)
         extracted_text = '\n'.join([text[1] for text in result])
         return extracted_text
     except ValueError as e:
@@ -139,7 +175,7 @@ elif option == "Image":
     image_file = st.file_uploader("Upload an image file", type=["jpg", "jpeg", "png"])
     if image_file:
         if st.button("Extract Text from Image"):
-            extracted_text = extract_text_from_image(image_file)
+            extracted_text = extract_text_from_image(image_file.read())
             if extracted_text:
                 st.session_state['main_text'] = extracted_text
                 st.session_state['main_text_with_prefix'] = extracted_text
