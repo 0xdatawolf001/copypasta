@@ -258,16 +258,16 @@ selected_option = st.selectbox("Select a prompt option:", list(prompt_options.ke
 if 'main_text_2' in st.session_state:
     st.subheader("Extracted Text:")
     # Add a custom CSS style to make the text area brighter
-    st.markdown(
-        """
-        <style>
-        .stTextArea .st-bf {
-            background-color: #f0f0f0; /* Adjust this color for desired brightness */
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    # st.markdown(
+    #     """
+    #     <style>
+    #     .stTextArea .st-bf {
+    #         background-color: #f0f0f0; /* Adjust this color for desired brightness */
+    #     }
+    #     </style>
+    #     """,
+    #     unsafe_allow_html=True,
+    # )
     st.text_area("Extracted Text:", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
     # Button to send combined text to LLM
