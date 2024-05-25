@@ -5,6 +5,7 @@ import re
 from st_copy_to_clipboard import st_copy_to_clipboard
 import PyPDF2
 import io
+import base64
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -39,6 +40,25 @@ def extract_text_from_pdf(pdf_file, start_page, end_page):
     
     return text
 
+# Function to display PDF pages
+def display_pdf_pages(pdf_file, start_page, end_page):
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
+    num_pages = len(pdf_reader.pages)
+    start_page = max(0, start_page - 1)  # Convert to zero-based index
+    end_page = min(num_pages - 1, end_page - 1)  # Convert to zero-based index
+    
+    output = PyPDF2.PdfWriter()
+    for page_num in range(start_page, end_page + 1):
+        output.add_page(pdf_reader.pages[page_num])
+    
+    pdf_bytes = io.BytesIO()
+    output.write(pdf_bytes)
+    pdf_bytes.seek(0)
+    
+    base64_pdf = base64.b64encode(pdf_bytes.read()).decode('utf-8')
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="700" height="1000" type="application/pdf"></iframe>'
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
 # Streamlit app
 st.title("Copy Pasta 🍝")
 st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
@@ -69,6 +89,7 @@ if option == "PDF":
                     main_text = extract_text_from_pdf(pdf_file, start_page, end_page)
                     st.session_state['main_text'] = main_text
                     st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+                    display_pdf_pages(pdf_file, start_page, end_page)  # Display the selected pages
                 else:
                     st.error("Please enter valid page numbers.")
         else:
@@ -77,6 +98,7 @@ if option == "PDF":
                 main_text = extract_text_from_pdf(pdf_file, 1, len(pdf_reader.pages))
                 st.session_state['main_text'] = main_text
                 st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+                display_pdf_pages(pdf_file, 1, len(pdf_reader.pages))  # Display all pages
 
 elif option == "URL":
     # Input box for URL
