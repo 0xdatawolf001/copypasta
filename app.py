@@ -107,7 +107,7 @@ st.write("""
 """)
 
 # Option to choose between URL, PDF, and Image
-option = st.radio("## Choose input type:", ("URL", "PDF", "Image"))
+option = st.radio("## Choose input type:", ("Website Links", "PDF", "Image"))
 
 if option == "PDF":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
@@ -136,9 +136,9 @@ if option == "PDF":
                 st.session_state['main_text'] = main_text
                 st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
 
-elif option == "URL":
+elif option == "Website Links":
     # Input box for URL
-    url = st.text_input("Enter the URL:")
+    url = st.text_input("Enter the Website Links:")
     
     # Button to extract text
     if st.button("Extract Text"):
@@ -196,4 +196,6 @@ if 'main_text_with_prefix' in st.session_state:
 elif 'main_text' in st.session_state:
     st_copy_to_clipboard(st.session_state['main_text'])
 
-st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
+st.write("""
+         This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile
+         """)
