@@ -9,3 +9,5 @@ easyocr
 pillow
 youtube-transcript-api
 urllib3
+openai
+asyncio
