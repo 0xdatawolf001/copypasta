@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from st_copy_to_clipboard import st_copy_to_clipboard
+import PyPDF2
+import io
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
@@ -23,29 +25,72 @@ def extract_text_from_url(url):
     else:
         return "No main body text found."
 
+# Function to extract text from a PDF
+def extract_text_from_pdf(pdf_file, start_page, end_page):
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
+    num_pages = len(pdf_reader.pages)
+    start_page = max(0, start_page - 1)  # Convert to zero-based index
+    end_page = min(num_pages - 1, end_page - 1)  # Convert to zero-based index
+    
+    text = ""
+    for page_num in range(start_page, end_page + 1):
+        page = pdf_reader.pages[page_num]
+        text += page.extract_text() + "\n"
+    
+    return text
 
 # Streamlit app
 st.title("Copy Pasta 🍝")
 st.subheader("No more painful text (mobile) highlighting. Copy text from long articles with a few clicks")
 
 st.write("""
-1) Enter a URL
+1) Enter a URL or upload a PDF
 2) Extract the text 
 3) Add prefix (prompt) if you want to use it for prompting (use mine if you want to for summary)
 """)
 
-# Input box for URL
-url = st.text_input("Enter the URL:")
+# Option to choose between URL and PDF
+option = st.radio("Choose input type:", ("URL", "PDF"))
 
-# Button to extract text
-if st.button("Extract Text"):
-    if url:
-        main_text = extract_text_from_url(url)
-        st.session_state['main_text'] = main_text
-        st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
-    else:
-        st.session_state['main_text'] = "Please enter a valid URL."
-        st.session_state['main_text_with_prefix'] = "Please enter a valid URL."
+if option == "PDF":
+    pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
+    
+    if pdf_file:
+        all_pages = st.checkbox("OCR all pages")
+        
+        if not all_pages:
+            start_page = st.number_input("Starting Page Number", min_value=1, step=1)
+            end_page = st.number_input("Ending Page Number", min_value=1, step=1)
+            
+            if st.button("Extract Text from PDF"):
+                if start_page and end_page:
+                    if start_page > end_page:
+                        start_page, end_page = end_page, start_page
+                    main_text = extract_text_from_pdf(pdf_file, start_page, end_page)
+                    st.session_state['main_text'] = main_text
+                    st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+                else:
+                    st.error("Please enter valid page numbers.")
+        else:
+            if st.button("Extract Text from PDF"):
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                main_text = extract_text_from_pdf(pdf_file, 1, len(pdf_reader.pages))
+                st.session_state['main_text'] = main_text
+                st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+
+elif option == "URL":
+    # Input box for URL
+    url = st.text_input("Enter the URL:")
+    
+    # Button to extract text
+    if st.button("Extract Text"):
+        if url:
+            main_text = extract_text_from_url(url)
+            st.session_state['main_text'] = main_text
+            st.session_state['main_text_with_prefix'] = main_text  # Initialize with the original text
+        else:
+            st.session_state['main_text'] = "Please enter a valid URL."
+            st.session_state['main_text_with_prefix'] = "Please enter a valid URL."
 
 # Display extracted text
 if 'main_text' in st.session_state:
@@ -85,5 +130,3 @@ elif 'main_text' in st.session_state:
     st_copy_to_clipboard(st.session_state['main_text'])
 
 st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
-
-
