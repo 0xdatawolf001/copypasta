@@ -268,7 +268,7 @@ if 'main_text_2' in st.session_state:
     #     """,
     #     unsafe_allow_html=True,
     # )
-    st.text_area("Extracted Text:", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
+    st.text_area("No editing for security reasons. Copy and paste your own text from Extract Text and use your LLM of choice", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
     # Button to send combined text to LLM
     if st.button("Send to LLM"):
