@@ -88,7 +88,7 @@ st.write("""
 # Option to choose between URL, PDF, and Image
 option = st.radio("Choose input type:", ("URL", "PDF", "Image"))
 
-if option == "PDF":
+if option == "PDF (Does not work with scans)":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
     
     if pdf_file:
@@ -178,3 +178,4 @@ elif 'main_text' in st.session_state:
     st_copy_to_clipboard(st.session_state['main_text'])
 
 st.write("This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile")
+
