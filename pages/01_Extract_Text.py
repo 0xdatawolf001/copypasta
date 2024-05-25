@@ -206,13 +206,20 @@ elif option == "Website Links":
             st.session_state['main_text_with_prefix'] = "Please enter a valid URL."
 
 elif option == "Image":
-    image_file = st.file_uploader("Upload an image file", type=["jpg", "jpeg", "png"])
-    if image_file:
-        if st.button("Extract Text from Image"):
-            extracted_text = extract_text_from_image(image_file.read())
-            if extracted_text:
-                st.session_state['main_text'] = extracted_text
-                st.session_state['main_text_with_prefix'] = extracted_text
+    image_files = st.file_uploader("Upload image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)  # Accept multiple files
+    if image_files:
+        if st.button("Extract Text from Images"):
+            extracted_texts = []
+            for image_file in image_files:
+                extracted_text = extract_text_from_image(image_file.read())
+                if extracted_text:
+                    extracted_texts.append(extracted_text)
+
+            if extracted_texts:
+                st.session_state['main_text'] = '\n\n'.join(extracted_texts)
+                st.session_state['main_text_with_prefix'] = '\n\n'.join(extracted_texts)
+            else:
+                st.error("No text could be extracted from the images.")
 
 # Display extracted text
 if 'main_text' in st.session_state:
@@ -252,5 +259,6 @@ elif 'main_text' in st.session_state:
     st_copy_to_clipboard(st.session_state['main_text'])
 
 st.write("""
-         This is a simple app that literally copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile
+         App is a little slow. Your patience (and support) is appreciated!
+         This is a simple app that copies everything on the page so that it is easier to copy large amount of text for prompting on Mobile
          """)

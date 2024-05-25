@@ -231,12 +231,14 @@ elif option == "Website Links":
             st.session_state['main_text_2'] = "Please enter a valid URL."
 
 elif option == "Image":
-    image_file = st.file_uploader("Upload an image file", type=["jpg", "jpeg", "png"])
-    if image_file:
-        if st.button("Extract Text from Image"):
-            extracted_text = extract_text_from_image(image_file.read())
+    image_files = st.file_uploader("Upload one or more image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+    if image_files:
+        if st.button("Extract Text from Images"):
+            extracted_text = ""
+            for image_file in image_files:
+                extracted_text += extract_text_from_image(image_file.read()) + "\n\n"
             if extracted_text:
-                st.session_state['main_text_2'] = extracted_text
+                st.session_state['main_text_2'] = extracted_text.strip()
 
 # Define placeholder options for the select box
 prompt_options = {
@@ -289,3 +291,4 @@ if 'main_text_2' in st.session_state:
 st.write("""
          This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow
          """)
+
