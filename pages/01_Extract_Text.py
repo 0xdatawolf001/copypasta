@@ -155,7 +155,7 @@ st.write("""
 """)
 
 # Option to choose between URL, PDF, and Image
-option = st.radio("## Choose input type:", ("Website Links", "PDF", "Image"))
+option = st.radio("## Choose input type:", ("Website Links", "PDF", "Image (Multiple Allowed)"))
 
 if option == "PDF":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
