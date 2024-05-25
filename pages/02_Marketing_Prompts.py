@@ -54,6 +54,10 @@ def extract_youtube_transcript(video_id):
         st.error(f"Error extracting YouTube transcript: {e}")
         return None
 
+@st.cache_resource
+def load_easyocr_model():
+    return Reader(['en'], gpu=False)
+reader = load_easyocr_model()
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
