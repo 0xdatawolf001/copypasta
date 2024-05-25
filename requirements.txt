@@ -1,14 +1,11 @@
-pyperclip
 streamlit
+bs4
 requests
 beautifulsoup4
-bs4
 st_copy_to_clipboard
 PyPDF2
 PyMuPDF
 easyocr
 pillow
-Pillow
-numpy
 youtube-transcript-api
 urllib3
