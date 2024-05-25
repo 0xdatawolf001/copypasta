@@ -198,14 +198,14 @@ if option == "PDF":
                         start_page, end_page = end_page, start_page
                     pdf_reader = PyPDF2.PdfReader(pdf_file)
                     main_text = extract_text_from_pdf(pdf_reader, start_page, end_page)
-                    st.session_state['main_text'] = main_text
+                    st.session_state['main_text_2'] = main_text
                 else:
                     st.error("Please enter valid page numbers.")
         else:
             if st.button("Extract Text from PDF"):
                 pdf_reader = PyPDF2.PdfReader(pdf_file)
                 main_text = extract_text_from_pdf(pdf_reader, 1, len(pdf_reader.pages))
-                st.session_state['main_text'] = main_text
+                st.session_state['main_text_2'] = main_text
 
 elif option == "Website Links":
     # Input box for URL
@@ -222,9 +222,9 @@ elif option == "Website Links":
                 main_text = extract_text_from_url(url)
             
             if main_text:
-                st.session_state['main_text'] = main_text
+                st.session_state['main_text_2'] = main_text
         else:
-            st.session_state['main_text'] = "Please enter a valid URL."
+            st.session_state['main_text_2'] = "Please enter a valid URL."
 
 elif option == "Image":
     image_file = st.file_uploader("Upload an image file", type=["jpg", "jpeg", "png"])
@@ -232,7 +232,7 @@ elif option == "Image":
         if st.button("Extract Text from Image"):
             extracted_text = extract_text_from_image(image_file.read())
             if extracted_text:
-                st.session_state['main_text'] = extracted_text
+                st.session_state['main_text_2'] = extracted_text
 
 # Define placeholder options for the select box
 prompt_options = {
@@ -251,7 +251,7 @@ prompt_options = {
 selected_option = st.selectbox("Select a prompt option:", list(prompt_options.keys()))
 
 # Display the selected prompt and extracted text
-if 'main_text' in st.session_state:
+if 'main_text_2' in st.session_state:
     st.subheader("Extracted Text:")
     # Add a custom CSS style to make the text area brighter
     st.markdown(
@@ -264,11 +264,11 @@ if 'main_text' in st.session_state:
         """,
         unsafe_allow_html=True,
     )
-    st.text_area("Extracted Text:", st.session_state['main_text'], height=300, disabled=True) # Disable editing
+    st.text_area("Extracted Text:", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
     # Button to send combined text to LLM
     if st.button("Send to LLM"):
-        combined_text = f"{st.session_state['main_text']}\n\n{prompt_options[selected_option]}"
+        combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
         
         # Call the LLM function
         llm_response = call_llm(combined_text)
