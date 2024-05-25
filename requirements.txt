@@ -9,3 +9,5 @@ fitz
 easyocr
 pillow
 Pillow
+pymupdf
+numpy
