@@ -12,6 +12,7 @@ from PIL import Image
 import numpy as np
 from youtube_transcript_api import YouTubeTranscriptApi
 import toml
+from urllib.parse import urlparse, parse_qs # Add for improved YouTube parsing
 
 # Function to read the API key from secrets.toml
 def get_api_key(file_path="notes.toml"):
@@ -19,12 +20,27 @@ def get_api_key(file_path="notes.toml"):
         config = toml.load(f)
     return config["api_keys"]["youtube"]
 
-# Function to extract YouTube video ID from URL
+# Function to extract YouTube video ID from URL (Improved)
 def extract_video_id(url):
-    # Check for YouTube specific patterns:
-    match = re.search(r'^(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:watch\?v=|embed\/|v\/)([a-zA-Z0-9_-]{11})', url)
-    if match:
-        return match.group(1)
+    # Define regex patterns for different YouTube URL formats
+    patterns = [
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)([a-zA-Z0-9_-]{11})',
+        r'(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})',
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})',
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:playlist\?list=|watch\?v=)([a-zA-Z0-9_-]{11})'
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+
+    # Fallback to parsing query parameters if regex fails
+    query = urlparse(url).query
+    params = parse_qs(query)
+    if 'v' in params:
+        return params['v'][0]
+
     return None
 
 # Function to extract transcript from a YouTube video
@@ -122,6 +138,8 @@ def extract_text_from_image(image_bytes):
     except ValueError as e:
         st.error(f"Error extracting text from image: {e}")
         return None
+    
+
 
 # Streamlit app
 st.title("Copy Pasta 🍝")
