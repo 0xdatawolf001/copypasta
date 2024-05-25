@@ -9,6 +9,6 @@ fitz
 easyocr
 pillow
 Pillow
-pymupdf
+PyMuPDF
+frontend
 numpy
-
