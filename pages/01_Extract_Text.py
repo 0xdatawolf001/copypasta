@@ -205,7 +205,7 @@ elif option == "Website Links":
             st.session_state['main_text'] = "Please enter a valid URL."
             st.session_state['main_text_with_prefix'] = "Please enter a valid URL."
 
-elif option == "Image":
+elif option == "Image (Multiple Allowed)":
     image_files = st.file_uploader("Upload image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)  # Accept multiple files
     if image_files:
         if st.button("Extract Text from Images"):
