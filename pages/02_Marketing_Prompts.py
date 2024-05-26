@@ -317,6 +317,7 @@ if 'main_text_2' in st.session_state:
                     "Extract the key insights and takeaways. Write in point form "
                     "and organize section in headers. Make sure it is comprehensive "
                     "and complete and you don't lose out important information. "
+                    "and write, if any, the implications and call to action"
                     "Write as long as possible. The more detailed the better:\n\n"
                 )
                 llm_response = call_llm(f"{summarize_prompt}{edited_text}") 
