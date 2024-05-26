@@ -291,14 +291,14 @@ if 'main_text_2' in st.session_state:
     
     # Button to send combined text to LLM
     if st.button("Send to LLM"):
-        if selected_option == "Summarize":
+        if selected_option == True: # "Summarize":
             # Apply Editing prompt first for Summarization
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
 
             # Chunking logic
             chunk_size = 16000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:30] 
+            chunks = chunks[:10] 
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
@@ -312,15 +312,15 @@ if 'main_text_2' in st.session_state:
 
             processing_message.text("Done!")
 
-            with st.spinner("Summarizing..."):
-                summarize_prompt = (
-                    "Extract the key insights and takeaways. Write in point form "
-                    "and organize section in headers. Make sure it is comprehensive "
-                    "and complete and you don't lose out important information. "
-                    "and write, if any, the implications and call to action"
-                    "Write as long as possible. The more detailed the better:\n\n"
-                )
-                llm_response = call_llm(f"{summarize_prompt}{edited_text}") 
+            with st.spinner("Almost Done ..."):
+                # summarize_prompt = (
+                #     "Extract the key insights and takeaways. Write in point form "
+                #     "and organize section in headers. Make sure it is comprehensive "
+                #     "and complete and you don't lose out important information. "
+                #     "and write, if any, the implications and call to action"
+                #     "Write as long as possible. The more detailed the better:\n\n"
+                # )
+                llm_response = call_llm(f"{edited_text}{prompt_options[selected_option]}") 
             st.subheader("LLM Response:")
             st.markdown(llm_response)
             st_copy_to_clipboard(llm_response, "Copy LLM Answer")  
@@ -349,42 +349,3 @@ if 'main_text_2' in st.session_state:
             st.subheader("LLM Response:")
             st.markdown(llm_response)
             st_copy_to_clipboard(llm_response, "Copy LLM Answer")
-
-    # # Button to send combined text to LLM
-    # if st.button("Send to LLM"):
-    #     combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
-
-    #     # Chunking logic
-    #     chunk_size = 16000
-    #     chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-
-    #     # Limit the chunks to a x pages pages
-    #     chunks = chunks[:30]
-
-    #     # Display a message with character count and update it dynamically
-    #     processing_message = st.empty()
-    #     processing_message.text(f"Processing your text: {len(combined_text)} characters")
-
-    #     llm_response = ""
-    #     for i, chunk in enumerate(chunks):
-    #         processing_message.text(f"Processing chunk {i+1}/{len(chunks)}...")
-    #         llm_response += f"\n\n# Page {i+1}\n" + call_llm(f"{chunk}\n\n{prompt_options[selected_option]}")
-    #         # Add a horizontal rule (---) after each page
-    #         if i < len(chunks) - 1: 
-    #             llm_response += "\n\n---\n\n"
-
-    #     # Update the message to "Done!" after LLM response is received
-    #     processing_message.text("Done!")
-
-    #     # Resummarize if the selected option is "Summarize"
-    #     if selected_option == "Summarize":
-    #         with st.spinner("Resummarizing..."):
-    #             resummarized_text = call_llm(f"Extract the key insights and takeaways. Write in point form and organize section in headers. make sure it is comprehensive and complete and you don't lose out important information. Write as long as possible. The more detailed the better:\n\n{llm_response}")
-    #         st.subheader("LLM Response:") # Keep the same header for consistency 
-    #         st.markdown(resummarized_text)  
-    #         st_copy_to_clipboard(resummarized_text, "Copy LLM Answer")  
-    #     else:
-    #         # Display the LLM response for other options
-    #         st.subheader("LLM Response:")
-    #         st.markdown(llm_response)
-    #         st_copy_to_clipboard(llm_response, "Copy LLM Answer")
