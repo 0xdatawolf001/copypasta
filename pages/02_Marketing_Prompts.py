@@ -146,37 +146,39 @@ def extract_text_from_image(image_bytes):
         st.error(f"Error extracting text from image: {e}")
         return None
     
+# Global variable to keep track of current LLM key index
+current_llm_key_index = 0
+
 def call_llm(copypasta_text):
+    global current_llm_key_index 
 
-    # script_dir = os.path.dirname(__file__)
-    # file_path = os.path.join(script_dir, 'notes.toml')
+    # Access the secret using the current index
+    llm_key = st.secrets['llm'][f'llm_model_{current_llm_key_index}']
 
-    # parsed_toml = toml.load(file_path)
+    try:
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=llm_key,
+        )
 
-    # Access the secret
-    llm_key =  st.secrets['llm']['llm_model']
+        completion = client.chat.completions.create(
+            # ... your existing completion code ...
+        )
 
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=llm_key,
-    )
+        reply = completion.choices[0].message.content
+        return reply
 
-    completion = client.chat.completions.create(
-        extra_headers={
-            "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
-            "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
-        },
-        model="meta-llama/llama-3-8b-instruct:free",
-        messages=[
-            {
-                "role": "user",
-                "content": copypasta_text,
-            },
-        ],
-    )
+    except OpenAI.RateLimitError:
+        # Rotate to the next key
+        current_llm_key_index = (current_llm_key_index % 10) + 1
 
-    reply = completion.choices[0].message.content
-    return reply
+        if current_llm_key_index == 1:
+            # All keys have been tried, display error message
+            st.error("LLM limit reached! Come back another day")
+            return None
+        else:
+            # Silently retry with the next key
+            return call_llm(copypasta_text)
 
 # Streamlit app
 st.title("Marketing Prompts 🤔")
