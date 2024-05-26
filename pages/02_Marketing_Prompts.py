@@ -178,7 +178,8 @@ def call_llm(copypasta_text):
         reply = completion.choices[0].message.content
         return reply
 
-    except Error:
+    except Exception as e:
+        print(f"An error occurred: {e}")
         # Rotate to the next key
         current_llm_key_index = (current_llm_key_index % 5) + 1
 
@@ -186,7 +187,6 @@ def call_llm(copypasta_text):
         if current_llm_key_index == 1:
             # All keys have been tried, display error message
             st.error("LLM limit reached! Come back another day")
-            return None
         else:
             # Silently retry with the next key
             return call_llm(copypasta_text)
