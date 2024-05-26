@@ -190,7 +190,40 @@ st.write("""
 # Option to choose between URL, PDF, and Image
 option = st.radio("## Choose input type:", ("Website Links", "PDF", "Image (Multiple Allowed)"))
 
-if option == "PDF":
+if option == "Website Links":
+    # Input box for URL
+    url = st.text_input("Enter the Website Links:")
+    
+    # Button to extract text
+    if st.button("Extract Text"):
+        if url:
+            # Check if it's a YouTube link
+            video_id = extract_video_id(url) 
+            if video_id:
+                with st.spinner("Extracting..."): # Add spinner here
+                    main_text = extract_youtube_transcript(video_id)
+            else:
+                with st.spinner("Extracting..."): # Add spinner here
+                    main_text = extract_text_from_url(url)
+            
+            if main_text:
+                st.session_state['main_text_2'] = main_text
+        else:
+            st.session_state['main_text_2'] = "Please enter a valid URL."
+
+elif option == "Image (Multiple Allowed)":
+    image_files = st.file_uploader("Upload one or more image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+    if image_files:
+        if st.button("Extract Text from Images"):
+            with st.spinner("Extracting..."): # Add spinner here
+                st.markdown("May be slow. Please be patient")
+                extracted_text = ""
+                for image_file in image_files:
+                    extracted_text += extract_text_from_image(image_file.read()) + "\n\n"
+                if extracted_text:
+                    st.session_state['main_text_2'] = extracted_text.strip()
+
+elif option == "PDF":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
     
     if pdf_file:
@@ -204,46 +237,18 @@ if option == "PDF":
                 if start_page and end_page:
                     if start_page > end_page:
                         start_page, end_page = end_page, start_page
-                    pdf_reader = PyPDF2.PdfReader(pdf_file)
-                    main_text = extract_text_from_pdf(pdf_reader, start_page, end_page)
-                    st.session_state['main_text_2'] = main_text
+                    with st.spinner("Extracting..."): # Add spinner here
+                        pdf_reader = PyPDF2.PdfReader(pdf_file)
+                        main_text = extract_text_from_pdf(pdf_reader, start_page, end_page)
+                        st.session_state['main_text_2'] = main_text
                 else:
                     st.error("Please enter valid page numbers.")
         else:
             if st.button("Extract Text from PDF"):
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
-                main_text = extract_text_from_pdf(pdf_reader, 1, len(pdf_reader.pages))
-                st.session_state['main_text_2'] = main_text
-
-elif option == "Website Links":
-    # Input box for URL
-    url = st.text_input("Enter the Website Links:")
-    
-    # Button to extract text
-    if st.button("Extract Text"):
-        if url:
-            # Check if it's a YouTube link
-            video_id = extract_video_id(url) 
-            if video_id:
-                main_text = extract_youtube_transcript(video_id)
-            else:
-                main_text = extract_text_from_url(url)
-            
-            if main_text:
-                st.session_state['main_text_2'] = main_text
-        else:
-            st.session_state['main_text_2'] = "Please enter a valid URL."
-
-elif option == "Image (Multiple Allowed)":
-    image_files = st.file_uploader("Upload one or more image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
-    if image_files:
-        if st.button("Extract Text from Images"):
-            st.markdown("May be slow. Please be patient")
-            extracted_text = ""
-            for image_file in image_files:
-                extracted_text += extract_text_from_image(image_file.read()) + "\n\n"
-            if extracted_text:
-                st.session_state['main_text_2'] = extracted_text.strip()
+                with st.spinner("Extracting..."): # Add spinner here
+                    pdf_reader = PyPDF2.PdfReader(pdf_file)
+                    main_text = extract_text_from_pdf(pdf_reader, 1, len(pdf_reader.pages))
+                    st.session_state['main_text_2'] = main_text
 
 # Define placeholder options for the select box
 prompt_options = {
