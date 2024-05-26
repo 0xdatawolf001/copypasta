@@ -15,12 +15,6 @@ import toml
 from urllib.parse import urlparse, parse_qs # Add for improved YouTube parsing
 from openai import OpenAI
 
-# # Function to read the API key from secrets.toml
-# def get_api_key(file_path="notes.toml"):
-#     with open(file_path, "r") as f:
-#         config = toml.load(f)
-#     return config["api_keys"]["youtube"]
-
 # Function to extract YouTube video ID from URL (Improved)
 def extract_video_id(url):
     # Define regex patterns for different YouTube URL formats
