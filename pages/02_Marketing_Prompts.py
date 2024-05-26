@@ -89,14 +89,15 @@ def extract_text_from_url(url):
 # Function to extract text from a PDF
 def extract_text_from_pdf(pdf_reader, start_page, end_page):
     num_pages = len(pdf_reader.pages)
-    start_page = max(0, start_page - 1)  # Convert to zero-based index
-    end_page = min(num_pages - 1, end_page - 1)  # Convert to zero-based index
+    start_page = max(0, start_page - 1) 
+    end_page = min(num_pages - 1, end_page - 1)  
     
     text = ""
+    progress_text = st.empty()  # Create an empty element to update progress
     for page_num in range(start_page, end_page + 1):
-        # Calculate progress
+        # Calculate and display progress
         progress = (page_num - start_page + 1) / (end_page - start_page + 1)
-        st.write(f"Progress: {progress:.0%} ({page_num+1}/{end_page+1})", unsafe_allow_html=True)
+        progress_text.text(f"Progress: {progress:.0%} ({page_num+1}/{end_page+1})") 
 
         page = pdf_reader.pages[page_num]
         page_text = page.extract_text()
@@ -108,6 +109,7 @@ def extract_text_from_pdf(pdf_reader, start_page, end_page):
             if ocr_text:
                 text += ocr_text + "\n"
     
+    progress_text.empty() # Optional: Clear the progress message
     return text
 
 # Function to extract text from a PDF page image using OCR
@@ -221,13 +223,18 @@ elif option == "Image (Multiple Allowed)":
     image_files = st.file_uploader("Upload one or more image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     if image_files:
         if st.button("Extract Text from Images"):
-            with st.spinner("Extracting..."): # Add spinner here
+            with st.spinner("Extracting..."):
                 st.markdown("May be slow. Please be patient")
                 extracted_text = ""
-                for image_file in image_files:
+                progress_text = st.empty()  # Create an empty element to update progress
+                for i, image_file in enumerate(image_files):
+                    # Calculate and update progress
+                    progress = (i + 1) / len(image_files)
+                    progress_text.text(f"Progress: {progress:.0%} ({i+1}/{len(image_files)})")
                     extracted_text += extract_text_from_image(image_file.read()) + "\n\n"
                 if extracted_text:
                     st.session_state['main_text_2'] = extracted_text.strip()
+                    progress_text.empty() # Optional: Clear the progress message
 
 elif option == "PDF":
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
