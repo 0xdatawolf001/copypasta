@@ -333,8 +333,6 @@ if 'main_text_2' in st.session_state:
                 if i < len(chunks) - 1: 
                     edited_text += "\n\n---\n\n"
 
-            processing_message.text("Done!")
-
             with st.spinner("Almost Done ..."):
                 # summarize_prompt = (
                 #     "Extract the key insights and takeaways. Write in point form "
