@@ -17,3 +17,13 @@ st.write("""
          Let's go!
          """)
 
+st.subheader("Some recommended LLMs")
+st.write("""
+         You can try:
+
+         -- labs.perplexity.ai
+
+         -- aistudio.google.com
+
+        for free models that takes in a lot of text
+         """)

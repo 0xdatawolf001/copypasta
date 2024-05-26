@@ -274,28 +274,27 @@ if 'main_text_2' in st.session_state:
     #     """,
     #     unsafe_allow_html=True,
     # )
-    st.text_area("No editing for security reasons. Copy and paste your own text from Extract Text and use your LLM of choice", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
+    st.text_area("No editing for security reasons. Copy and paste your own text from Extract Text and use your LLM of choice for custom prompts", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
     st.write("""
          This feeds the extracted text to OpenRouter's Llama 8b! Can be a little slow. Thank you for waiting
          """)
-    # Button to send combined text to LLM
+# Button to send combined text to LLM
     if st.button("Send to LLM"):
         combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
         
-        # Call the LLM function
-        llm_response = call_llm(combined_text)
-
-        # Display a "Generating Text!" message while waiting for the LLM response
-        with st.spinner("Generating Text!"):
-            # Call the LLM function
+        # Display a message with character count and update it dynamically
+        processing_message = st.empty()
+        processing_message.text(f"Processing your text: {len(combined_text)} characters")
+        
+        # Call the LLM function within the spinner context
+        with st.spinner("Generating Text! Almost there..."):
             llm_response = call_llm(combined_text)
 
+        # Update the message to "Done!" after LLM response is received
+        processing_message.text("Done!")
         
         # Display the LLM response
         st.subheader("LLM Response:")
-        # st.text_area("LLM Output:", llm_response, height=500)
         st.markdown(llm_response)
         st_copy_to_clipboard(llm_response, "Copy LLM Answer")
-
-
