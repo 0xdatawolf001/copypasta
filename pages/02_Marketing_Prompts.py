@@ -145,9 +145,9 @@ def extract_text_from_image(image_bytes):
     except ValueError as e:
         st.error(f"Error extracting text from image: {e}")
         return None
-    
+
 # Global variable to keep track of current LLM key index
-current_llm_key_index = 0
+current_llm_key_index = 1
 
 def call_llm(copypasta_text):
     global current_llm_key_index 
@@ -162,16 +162,27 @@ def call_llm(copypasta_text):
         )
 
         completion = client.chat.completions.create(
-            # ... your existing completion code ...
+            extra_headers={
+                "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
+                "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
+            },
+            model="meta-llama/llama-3-8b-instruct:free",
+            messages=[
+                {
+                    "role": "user",
+                    "content": copypasta_text,
+                },
+            ],
         )
 
         reply = completion.choices[0].message.content
         return reply
 
-    except OpenAI.RateLimitError:
+    except Error:
         # Rotate to the next key
-        current_llm_key_index = (current_llm_key_index % 10) + 1
+        current_llm_key_index = (current_llm_key_index % 5) + 1
 
+        # Check if all keys have been exhausted within the except block
         if current_llm_key_index == 1:
             # All keys have been tried, display error message
             st.error("LLM limit reached! Come back another day")
