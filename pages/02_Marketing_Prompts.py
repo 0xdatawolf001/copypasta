@@ -286,7 +286,7 @@ if 'main_text_2' in st.session_state:
          """)
     
     st.write(f"""
-         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 16000)+1}
+         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 30000)+1}
          """)
     
     # Button to send combined text to LLM
@@ -296,7 +296,7 @@ if 'main_text_2' in st.session_state:
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
 
             # Chunking logic
-            chunk_size = 16000
+            chunk_size = 30000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
             chunks = chunks[:10] 
 
@@ -330,7 +330,7 @@ if 'main_text_2' in st.session_state:
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
 
             # Chunking logic (same as before)
-            chunk_size = 16000
+            chunk_size = 30000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
             chunks = chunks[:10]
 
