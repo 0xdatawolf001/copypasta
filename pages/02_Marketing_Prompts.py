@@ -318,7 +318,7 @@ if 'main_text_2' in st.session_state:
         # Resummarize if the selected option is "Summarize"
         if selected_option == "Summarize":
             with st.spinner("Resummarizing..."):
-                resummarized_text = call_llm(f"Please summarize the following text:\n\n{llm_response}")
+                resummarized_text = call_llm(f"Extract the key insights and takeaways. Write in point form and organize section in headers. make sure it is comprehensive and complete and you don't lose out important information. Write as long as possible. The more detailed the better:\n\n{llm_response}")
             st.subheader("LLM Response:") # Keep the same header for consistency 
             st.markdown(resummarized_text)  
             st_copy_to_clipboard(resummarized_text, "Copy LLM Answer")  
