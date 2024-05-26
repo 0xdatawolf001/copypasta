@@ -332,7 +332,7 @@ if 'main_text_2' in st.session_state:
             # Chunking logic (same as before)
             chunk_size = 16000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:30]
+            chunks = chunks[:10]
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
