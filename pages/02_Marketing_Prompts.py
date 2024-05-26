@@ -160,7 +160,11 @@ def call_llm(copypasta_text):
     )
 
     completion = client.chat.completions.create(
-        model="microsoft/phi-3-medium-128k-instruct:free",
+        extra_headers={
+            "HTTP-Referer": copypasta.streamlit.app, # Optional, for including your app on openrouter.ai rankings.
+            "X-Title": copypasta, # Optional. Shows in rankings on openrouter.ai.
+        },
+        model="meta-llama/llama-3-8b-instruct:free",
         messages=[
             {
                 "role": "user",
@@ -290,5 +294,6 @@ if 'main_text_2' in st.session_state:
 
 st.write("""
          This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow
+         Model used is OpenRouter's Llama 8b
          """)
 
