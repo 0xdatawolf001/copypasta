@@ -271,7 +271,7 @@ if 'main_text_2' in st.session_state:
          """)
     
     st.write(f"""
-         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 8000)+1}
+         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 16000)+1}
          """)
     
     # Button to send combined text to LLM
