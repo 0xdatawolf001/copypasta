@@ -152,7 +152,7 @@ def call_llm(copypasta_text):
     # parsed_toml = toml.load(file_path)
 
     # Access the secret
-    llm_key = st.secrets['llm']['llm_model']
+    llm_key =  st.secrets['llm']['llm_model']
 
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
@@ -276,6 +276,9 @@ if 'main_text_2' in st.session_state:
     # )
     st.text_area("No editing for security reasons. Copy and paste your own text from Extract Text and use your LLM of choice", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
+    st.write("""
+         This feeds the extracted text to OpenRouter's Llama 8b! Can be a little slow. Thank you for waiting
+         """)
     # Button to send combined text to LLM
     if st.button("Send to LLM"):
         combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
@@ -288,13 +291,11 @@ if 'main_text_2' in st.session_state:
             # Call the LLM function
             llm_response = call_llm(combined_text)
 
+        
         # Display the LLM response
         st.subheader("LLM Response:")
-        st.text_area("LLM Output:", llm_response, height=500)
+        # st.text_area("LLM Output:", llm_response, height=500)
+        st.markdown(llm_response)
+        st_copy_to_clipboard(llm_response, "Copy LLM Answer")
 
-st.write("""
-         This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow.
-         
-         Model used is OpenRouter's Llama 8b
-         """)
 

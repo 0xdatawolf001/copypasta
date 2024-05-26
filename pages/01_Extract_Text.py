@@ -253,10 +253,10 @@ if 'main_text_with_prefix' in st.session_state:
     st.text_area("Text with Prefix (Prompt):", st.session_state['main_text_with_prefix'], height=300)
 
 # Button to copy text to clipboard
-if 'main_text_with_prefix' in st.session_state:
-    st_copy_to_clipboard(st.session_state['main_text_with_prefix'])
+if 'main_text_with_prefix' in st.session_state: 
+    st_copy_to_clipboard(st.session_state['main_text_with_prefix'], "Copy Extracted Text")
 elif 'main_text' in st.session_state:
-    st_copy_to_clipboard(st.session_state['main_text'])
+    st_copy_to_clipboard(st.session_state['main_text'], "Copy Extracted Text")
 
 st.write("""
          App is a little slow. Your patience (and support) is appreciated!
