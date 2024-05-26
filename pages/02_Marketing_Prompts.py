@@ -161,8 +161,8 @@ def call_llm(copypasta_text):
 
     completion = client.chat.completions.create(
         extra_headers={
-            "HTTP-Referer": copypasta.streamlit.app, # Optional, for including your app on openrouter.ai rankings.
-            "X-Title": copypasta, # Optional. Shows in rankings on openrouter.ai.
+            "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
+            "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
         },
         model="meta-llama/llama-3-8b-instruct:free",
         messages=[
