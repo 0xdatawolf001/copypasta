@@ -293,7 +293,8 @@ if 'main_text_2' in st.session_state:
         st.text_area("LLM Output:", llm_response, height=500)
 
 st.write("""
-         This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow
+         This feeds the extracted text to an LLM (OpenRouter)! Be patient because it is on a free tier and can be slow.
+         
          Model used is OpenRouter's Llama 8b
          """)
 
