@@ -279,22 +279,37 @@ if 'main_text_2' in st.session_state:
     st.write("""
          This feeds the extracted text to OpenRouter's Llama 8b! Can be a little slow. Thank you for waiting
          """)
+    
+    st.write(f"""
+         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 8000)+1}
+         """)
 # Button to send combined text to LLM
     if st.button("Send to LLM"):
         combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
-        
+
+        # Chunking logic with a maximum of 10 chunks
+        chunk_size = 8000
+        max_chunks = 10
+        num_chunks = min(max_chunks, (len(combined_text) + chunk_size - 1) // chunk_size)  # Calculate up to 10 chunks max
+        chunks = [combined_text[i * chunk_size:(i + 1) * chunk_size] for i in range(num_chunks)]
+
         # Display a message with character count and update it dynamically
         processing_message = st.empty()
         processing_message.text(f"Processing your text: {len(combined_text)} characters")
-        
-        # Call the LLM function within the spinner context
-        with st.spinner("Generating Text! Almost there..."):
-            llm_response = call_llm(combined_text)
+
+        llm_response = ""
+        for i, chunk in enumerate(chunks):
+            processing_message.text(f"Processing {i+1}/{num_chunks} chunks...")
+            llm_response += call_llm(f"{chunk}\n\n{prompt_options[selected_option]}")  # Include prompt for each chunk
 
         # Update the message to "Done!" after LLM response is received
         processing_message.text("Done!")
-        
-        # Display the LLM response
+
+        # Display the LLM response with page numbers
         st.subheader("LLM Response:")
-        st.markdown(llm_response)
+        response_chunks = llm_response.split("\n\nPage ")  # Assuming page breaks are "\n\nPage "
+        for i, chunk in enumerate(response_chunks):
+            if i > 0:
+                st.markdown(f"**Page {i}:**")
+            st.markdown(chunk.strip())
         st_copy_to_clipboard(llm_response, "Copy LLM Answer")
