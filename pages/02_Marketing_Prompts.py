@@ -314,7 +314,7 @@ if 'main_text_2' in st.session_state:
     
     # Button to send combined text to LLM
     if st.button("Send to LLM (Max 10 pages)"):
-        if selected_option != "Summarize":
+        if selected_option == "Summarize":
             # Apply Editing prompt first for Summarization
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
 
