@@ -295,7 +295,7 @@ if 'main_text_2' in st.session_state:
          """)
     
     # Button to send combined text to LLM
-    if st.button("Send to LLM (Max first 10 pages)"):
+    if st.button("Send to LLM"):
         combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
 
         # Chunking logic
