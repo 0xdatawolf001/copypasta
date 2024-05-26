@@ -238,6 +238,7 @@ elif option == "Image (Multiple Allowed)":
     image_files = st.file_uploader("Upload one or more image files", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
     if image_files:
         if st.button("Extract Text from Images"):
+            st.markdown("May be slow. Please be patient")
             extracted_text = ""
             for image_file in image_files:
                 extracted_text += extract_text_from_image(image_file.read()) + "\n\n"
@@ -263,17 +264,6 @@ selected_option = st.selectbox("Select a prompt option:", list(prompt_options.ke
 # Display the selected prompt and extracted text
 if 'main_text_2' in st.session_state:
     st.subheader("Extracted Text:")
-    # Add a custom CSS style to make the text area brighter
-    # st.markdown(
-    #     """
-    #     <style>
-    #     .stTextArea .st-bf {
-    #         background-color: #f0f0f0; /* Adjust this color for desired brightness */
-    #     }
-    #     </style>
-    #     """,
-    #     unsafe_allow_html=True,
-    # )
     st.text_area("No editing for security reasons. Copy and paste your own text from Extract Text and use your LLM of choice for custom prompts", st.session_state['main_text_2'], height=300, disabled=True) # Disable editing
 
     st.write("""
@@ -283,15 +273,14 @@ if 'main_text_2' in st.session_state:
     st.write(f"""
          There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 8000)+1}
          """)
-# Button to send combined text to LLM
+    
+    # Button to send combined text to LLM
     if st.button("Send to LLM"):
         combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
 
-        # Chunking logic with a maximum of 10 chunks
+        # Chunking logic
         chunk_size = 8000
-        max_chunks = 10
-        num_chunks = min(max_chunks, (len(combined_text) + chunk_size - 1) // chunk_size)  # Calculate up to 10 chunks max
-        chunks = [combined_text[i * chunk_size:(i + 1) * chunk_size] for i in range(num_chunks)]
+        chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
 
         # Display a message with character count and update it dynamically
         processing_message = st.empty()
@@ -299,17 +288,16 @@ if 'main_text_2' in st.session_state:
 
         llm_response = ""
         for i, chunk in enumerate(chunks):
-            processing_message.text(f"Processing {i+1}/{num_chunks} chunks...")
-            llm_response += call_llm(f"{chunk}\n\n{prompt_options[selected_option]}")  # Include prompt for each chunk
+            processing_message.text(f"Processing chunk {i+1}/{len(chunks)}...")
+            llm_response += f"\n\n# Page {i+1}\n" + call_llm(f"{chunk}\n\n{prompt_options[selected_option]}")
+            # Add a horizontal rule (---) after each page
+            if i < len(chunks) - 1: 
+                llm_response += "\n\n---\n\n"
 
         # Update the message to "Done!" after LLM response is received
         processing_message.text("Done!")
 
-        # Display the LLM response with page numbers
+        # Display the LLM response
         st.subheader("LLM Response:")
-        response_chunks = llm_response.split("\n\nPage ")  # Assuming page breaks are "\n\nPage "
-        for i, chunk in enumerate(response_chunks):
-            if i > 0:
-                st.markdown(f"**Page {i}:**")
-            st.markdown(chunk.strip())
+        st.markdown(llm_response)
         st_copy_to_clipboard(llm_response, "Copy LLM Answer")
