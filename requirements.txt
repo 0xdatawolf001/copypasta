@@ -10,4 +10,5 @@ pillow
 youtube-transcript-api
 urllib3
 openai
+google-generativeai
 asyncio

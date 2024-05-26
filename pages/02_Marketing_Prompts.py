@@ -5,6 +5,8 @@ import re
 from st_copy_to_clipboard import st_copy_to_clipboard
 import PyPDF2
 import io
+import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import base64
 from easyocr import Reader
 import fitz  # PyMuPDF
@@ -147,7 +149,7 @@ def extract_text_from_image(image_bytes):
         return None
 
 # Global variable to keep track of current LLM key index
-current_llm_key_index = 1
+current_llm_key_index = 0
 
 def call_llm(copypasta_text):
     global current_llm_key_index 
@@ -156,32 +158,40 @@ def call_llm(copypasta_text):
     llm_key = st.secrets['llm'][f'llm_model_{current_llm_key_index}']
 
     try:
-        client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=llm_key,
-        )
+        model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+        genai.configure(api_key=llm_key)
+        reply = model.generate_content(f"{copypasta_text}", safety_settings={
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
+        reply = reply.text
+        # client = OpenAI(
+        #     base_url="https://openrouter.ai/api/v1",
+        #     api_key=llm_key,
+        # )
 
-        completion = client.chat.completions.create(
-            extra_headers={
-                "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
-                "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
-            },
-            model="meta-llama/llama-3-8b-instruct:free",
-            messages=[
-                {
-                    "role": "user",
-                    "content": copypasta_text,
-                },
-            ],
-        )
+        # completion = client.chat.completions.create(
+        #     extra_headers={
+        #         "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
+        #         "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
+        #     },
+        #     model="meta-llama/llama-3-8b-instruct:free",
+        #     messages=[
+        #         {
+        #             "role": "user",
+        #             "content": copypasta_text,
+        #         },
+        #     ],
+        # )
 
-        reply = completion.choices[0].message.content
+        # reply = completion.choices[0].message.content
         return reply
 
     except Exception as e:
         print(f"An error occurred: {e}")
         # Rotate to the next key
-        current_llm_key_index = (current_llm_key_index % 5) + 1
+        current_llm_key_index = (current_llm_key_index % 2) + 1
 
         # Check if all keys have been exhausted within the except block
         if current_llm_key_index == 1:
@@ -299,19 +309,19 @@ if 'main_text_2' in st.session_state:
          """)
     
     st.write(f"""
-         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 30000)+1}
+         There are {len(st.session_state['main_text_2'])} characters. Page Count: {(len(st.session_state['main_text_2']) // 1000000)+1}
          """)
     
     # Button to send combined text to LLM
     if st.button("Send to LLM (Max 10 pages)"):
-        if selected_option != "Editing": # "Summarize":
+        if selected_option == False: # != "Editing": # "Summarize":
             # Apply Editing prompt first for Summarization
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
 
             # Chunking logic
-            chunk_size = 30000
+            chunk_size = 1000000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:11] 
+            chunks = chunks[:10] 
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
@@ -343,9 +353,9 @@ if 'main_text_2' in st.session_state:
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options[selected_option]}"
 
             # Chunking logic (same as before)
-            chunk_size = 30000
+            chunk_size = 1000000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:11]
+            chunks = chunks[:10]
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
