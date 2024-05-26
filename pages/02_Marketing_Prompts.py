@@ -290,7 +290,7 @@ if 'main_text_2' in st.session_state:
          """)
     
     # Button to send combined text to LLM
-    if st.button("Send to LLM"):
+    if st.button(" (Max 10 pages)"):
         if selected_option != "Editing": # "Summarize":
             # Apply Editing prompt first for Summarization
             combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
@@ -298,7 +298,7 @@ if 'main_text_2' in st.session_state:
             # Chunking logic
             chunk_size = 30000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:10] 
+            chunks = chunks[:11] 
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
@@ -332,7 +332,7 @@ if 'main_text_2' in st.session_state:
             # Chunking logic (same as before)
             chunk_size = 30000
             chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
-            chunks = chunks[:10]
+            chunks = chunks[:11]
 
             processing_message = st.empty()
             processing_message.text(f"Processing your text: {len(combined_text)} characters")
