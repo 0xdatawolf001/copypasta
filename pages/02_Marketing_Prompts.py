@@ -94,13 +94,16 @@ def extract_text_from_pdf(pdf_reader, start_page, end_page):
 
         page = pdf_reader.pages[page_num]
         page_text = page.extract_text()
-        if page_text:
-            text += page_text + "\n"
-        else:
-            # If no text is found, convert the page to an image and use OCR
+        
+        # Check if extracted text has less than 2 characters
+        if len(page_text.strip()) < 2:
+            # If less than 2 characters, assume it's an image and use OCR
             ocr_text = extract_text_from_pdf_image(pdf_reader, page_num)
             if ocr_text:
                 text += ocr_text + "\n"
+        else:
+            # If 2 or more characters, use the extracted text
+            text += page_text + "\n"
     
     progress_text.empty() # Optional: Clear the progress message
     return text
