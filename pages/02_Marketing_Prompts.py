@@ -141,12 +141,36 @@ def extract_text_from_image(image_bytes):
     reader = Reader(['en'], gpu=False) # change language if needed
     try:
         with st.spinner("Extracting text from image..."):
-            result = reader.readtext(image_bytes)
+            # Load image from bytes
+            image = Image.open(io.BytesIO(image_bytes))
+
+            # Downsize the image if it's larger than 720p
+            if image.width > 1920 or image.height > 1080:
+                image = image.resize((image.width // 2, image.height // 2))
+
+            # Convert resized image back to bytes
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
+
+            result = reader.readtext(img_byte_arr)
             extracted_text = '\n'.join([text[1] for text in result])
             return extracted_text
     except ValueError as e:
         st.error(f"Error extracting text from image: {e}")
         return None
+
+# # Function to extract text from an image using EasyOCR
+# def extract_text_from_image(image_bytes):
+#     reader = Reader(['en'], gpu=False) # change language if needed
+#     try:
+#         with st.spinner("Extracting text from image..."):
+#             result = reader.readtext(image_bytes)
+#             extracted_text = '\n'.join([text[1] for text in result])
+#             return extracted_text
+#     except ValueError as e:
+#         st.error(f"Error extracting text from image: {e}")
+#         return None
 
 # Global variable to keep track of current LLM key index
 current_llm_key_index = 0
