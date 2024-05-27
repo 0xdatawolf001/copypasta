@@ -7,7 +7,6 @@ import PyPDF2
 import numpy as np
 import io
 import base64
-from readability import Document
 from easyocr import Reader
 import fitz  # PyMuPDF
 from PIL import Image

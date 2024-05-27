@@ -209,6 +209,7 @@ def call_llm(copypasta_text):
 
 
 
+
 # Streamlit app
 st.title("Copy Pasta 🍝")
 st.subheader("Copy text from articles, PDFs, and images for LLM prompting with one click")
