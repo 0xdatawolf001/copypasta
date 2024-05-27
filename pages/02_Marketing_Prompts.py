@@ -65,7 +65,7 @@ def extract_text_from_url(url):
         pdf_file = io.BytesIO(response.content)
         pdf_reader = PyPDF2.PdfReader(pdf_file)
         return extract_text_from_pdf(pdf_reader, 1, len(pdf_reader.pages))
-    elif 'image' in content_type:
+    elif content_type in ['image/png', 'image/jpeg', 'image/jpg']:
         # If the URL points to an image, extract text from the image
         image_file = io.BytesIO(response.content)
         return extract_text_from_image(image_file)
