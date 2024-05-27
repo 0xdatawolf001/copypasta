@@ -10,6 +10,8 @@ import base64
 from easyocr import Reader
 import fitz  # PyMuPDF
 from PIL import Image
+import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from youtube_transcript_api import YouTubeTranscriptApi
 import toml
 from urllib.parse import urlparse, parse_qs # Add for improved YouTube parsing
@@ -209,8 +211,6 @@ def call_llm(copypasta_text):
         else:
             # Silently retry with the next key
             return call_llm(copypasta_text)
-
-
 
 
 # Streamlit app
