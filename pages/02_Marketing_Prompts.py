@@ -356,6 +356,39 @@ if 'main_text_2' in st.session_state:
                 llm_response = call_llm(f"{edited_text}{prompt_options[selected_option]}") 
             st.subheader("LLM Response:")
             st.markdown(llm_response)
+            st_copy_to_clipboard(llm_response, "Copy LLM Answer") 
+
+            
+        elif selected_option == "Product Requirement Doc":
+            # Apply Editing prompt first for Summarization
+            combined_text = f"{st.session_state['main_text_2']}\n\n{prompt_options['Editing']}" 
+
+            # Chunking logic
+            chunk_size = 30000
+            chunks = [combined_text[i:i + chunk_size] for i in range(0, len(combined_text), chunk_size)]
+            chunks = chunks[:10]
+
+            processing_message = st.empty()
+            processing_message.text(f"Processing your text: {len(combined_text)} characters")
+
+            edited_text = "" 
+            for i, chunk in enumerate(chunks):
+                processing_message.text(f"Processing chunk {i+1}/{len(chunks)}...")
+                edited_text += f"\n\n# Page {i+1}\n" + call_llm(f"{chunk}")
+                if i < len(chunks) - 1: 
+                    edited_text += "\n\n---\n\n"
+
+            with st.spinner("Almost Done ..."):
+                # summarize_prompt = (
+                #     "Extract the key insights and takeaways. Write in point form "
+                #     "and organize section in headers. Make sure it is comprehensive "
+                #     "and complete and you don't lose out important information. "
+                #     "and write, if any, the implications and call to action"
+                #     "Write as long as possible. The more detailed the better:\n\n"
+                # )
+                llm_response = call_llm(f"{edited_text}{prompt_options[selected_option]}") 
+            st.subheader("LLM Response:")
+            st.markdown(llm_response)
             st_copy_to_clipboard(llm_response, "Copy LLM Answer")  
 
         else: 
