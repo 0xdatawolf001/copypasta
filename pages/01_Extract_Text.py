@@ -67,17 +67,17 @@ def extract_text_from_url(url):
         image_bytes = response.content 
         return extract_text_from_image(image_bytes) 
     else:
-        # Otherwise, extract text from the HTML content
         soup = BeautifulSoup(response.content, 'html.parser')
-        main_content = soup.find('article') or soup.find('div', {'class': 'main-content'}) or soup.find('body')
-        
-        if main_content:
-            paragraphs = main_content.find_all(['p', 'div'])
-            text = "\n".join([para.get_text(separator=' ', strip=True) for para in paragraphs])
-            text = re.sub(r'\s+', ' ', text).strip()
-            return text
-        else:
-            return "No main body text found."
+
+        # Find collapsed sections (often using CSS class "mw-collapsed") 
+        for collapsed_section in soup.find_all(class_="mw-collapsed"):
+            # Remove the "collapsed" class to expand the section
+            collapsed_section['class'] = [cls for cls in collapsed_section['class'] if cls != 'mw-collapsed'] 
+
+        # Extract text after expanding sections
+        text = soup.get_text(separator=' ', strip=True)
+        cleaned_text = re.sub(r'\s+', ' ', text) 
+        return cleaned_text
 
 # Function to extract text from a PDF
 def extract_text_from_pdf(pdf_reader, start_page, end_page):
