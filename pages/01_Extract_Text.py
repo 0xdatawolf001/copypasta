@@ -125,7 +125,7 @@ def extract_text_from_pdf_image(pdf_reader, page_num):
         image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
         
         # Downsize the image to reduce memory usage
-        image = image.resize((image.width // 1.1, image.height // 1.1))
+        image = image.resize((image.width // 1, image.height // 1))
         
         # Convert image to bytes
         img_byte_arr = io.BytesIO()
