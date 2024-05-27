@@ -145,7 +145,7 @@ def extract_text_from_image(image_bytes):
             image = Image.open(io.BytesIO(image_bytes))
 
             # Downsize the image if it's larger than 720p
-            if image.width > 1920 and image.height > 1080:
+            if (image.width > 1920 and image.height > 1080) or (image.height > 1920 and image.width > 1080):
                 image = image.resize((image.width // 2, image.height // 2))
 
             # Convert resized image back to bytes
