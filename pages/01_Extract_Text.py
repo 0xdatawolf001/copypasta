@@ -91,60 +91,24 @@ def extract_text_from_pdf(pdf_reader, start_page, end_page):
     end_page = min(num_pages - 1, end_page - 1)  
     
     text = ""
-    progress_text = st.empty()
-    using_ocr = False  # Flag to track if we've switched to OCR
-
+    progress_text = st.empty()  # Create an empty element to update progress
     for page_num in range(start_page, end_page + 1):
+        # Calculate and display progress
         progress = (page_num - start_page + 1) / (end_page - start_page + 1)
         progress_text.text(f"Progress: {progress:.0%} ({page_num+1}/{end_page+1})") 
 
         page = pdf_reader.pages[page_num]
-
-        # Use OCR for all remaining pages if already switched
-        if using_ocr:
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text + "\n"
+        else:
+            # If no text is found, convert the page to an image and use OCR
             ocr_text = extract_text_from_pdf_image(pdf_reader, page_num)
             if ocr_text:
                 text += ocr_text + "\n"
-        else:
-            page_text = page.extract_text()
-
-            # If no text and more pages, switch to OCR for the rest
-            if len(page_text.strip()) < 10 and page_num < end_page: 
-                using_ocr = True
-                ocr_text = extract_text_from_pdf_image(pdf_reader, page_num)
-                if ocr_text:
-                    text += ocr_text + "\n"
-            else:
-                text += page_text + "\n"
-
-    progress_text.empty()
+    
+    progress_text.empty() # Optional: Clear the progress message
     return text
-
-# # Function to extract text from a PDF
-# def extract_text_from_pdf(pdf_reader, start_page, end_page):
-#     num_pages = len(pdf_reader.pages)
-#     start_page = max(0, start_page - 1) 
-#     end_page = min(num_pages - 1, end_page - 1)  
-    
-#     text = ""
-#     progress_text = st.empty()  # Create an empty element to update progress
-#     for page_num in range(start_page, end_page + 1):
-#         # Calculate and display progress
-#         progress = (page_num - start_page + 1) / (end_page - start_page + 1)
-#         progress_text.text(f"Progress: {progress:.0%} ({page_num+1}/{end_page+1})") 
-
-#         page = pdf_reader.pages[page_num]
-#         page_text = page.extract_text()
-#         if page_text:
-#             text += page_text + "\n"
-#         else:
-#             # If no text is found, convert the page to an image and use OCR
-#             ocr_text = extract_text_from_pdf_image(pdf_reader, page_num)
-#             if ocr_text:
-#                 text += ocr_text + "\n"
-    
-#     progress_text.empty() # Optional: Clear the progress message
-#     return text
 
 # Function to extract text from a PDF page image using OCR
 def extract_text_from_pdf_image(pdf_reader, page_num):
