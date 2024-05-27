@@ -13,12 +13,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import toml
 from urllib.parse import urlparse, parse_qs # Add for improved YouTube parsing
 
-# Function to read the API key from secrets.toml
-def get_api_key(file_path="notes.toml"):
-    with open(file_path, "r") as f:
-        config = toml.load(f)
-    return config["api_keys"]["youtube"]
-
 # Function to extract YouTube video ID from URL (Improved)
 def extract_video_id(url):
     # Define regex patterns for different YouTube URL formats
@@ -143,13 +137,78 @@ def extract_text_from_image(image_bytes):
     reader = Reader(['en'], gpu=False) # change language if needed
     try:
         with st.spinner("Extracting text from image..."):
-            result = reader.readtext(image_bytes)
+            # Load image from bytes
+            image = Image.open(io.BytesIO(image_bytes))
+
+            # Downsize the image if it's larger than 720p
+            if (image.width > 1920 and image.height > 1080) or (image.height > 1920 and image.width > 1080):
+                image = image.resize((image.width // 2, image.height // 2))
+
+            # Convert resized image back to bytes
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
+
+            result = reader.readtext(img_byte_arr)
             extracted_text = '\n'.join([text[1] for text in result])
             return extracted_text
     except ValueError as e:
         st.error(f"Error extracting text from image: {e}")
         return None
-    
+
+# Global variable to keep track of current LLM key index
+current_llm_key_index = 0
+
+def call_llm(copypasta_text):
+    global current_llm_key_index 
+
+    # Access the secret using the current index
+    llm_key = st.secrets['llm'][f'llm_model_{current_llm_key_index}']
+
+    try:
+        model = genai.GenerativeModel(model_name='gemini-1.5-flash')
+        genai.configure(api_key=llm_key)
+        reply = model.generate_content(f"{copypasta_text}", safety_settings={
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
+        reply = reply.text
+        # client = OpenAI(
+        #     base_url="https://openrouter.ai/api/v1",
+        #     api_key=llm_key,
+        # )
+
+        # completion = client.chat.completions.create(
+        #     extra_headers={
+        #         "HTTP-Referer": "copypasta.streamlit.app", # Optional, for including your app on openrouter.ai rankings.
+        #         "X-Title": "copypasta", # Optional. Shows in rankings on openrouter.ai.
+        #     },
+        #     model="meta-llama/llama-3-8b-instruct:free",
+        #     messages=[
+        #         {
+        #             "role": "user",
+        #             "content": copypasta_text,
+        #         },
+        #     ],
+        # )
+
+        # reply = completion.choices[0].message.content
+        return reply
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        # Rotate to the next key
+        current_llm_key_index = (current_llm_key_index % 2) + 1
+
+        # Check if all keys have been exhausted within the except block
+        if current_llm_key_index == 1:
+            # All keys have been tried, display error message
+            st.error("LLM limit reached! Come back another day")
+        else:
+            # Silently retry with the next key
+            return call_llm(copypasta_text)
+
 
 
 # Streamlit app
