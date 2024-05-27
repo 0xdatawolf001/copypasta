@@ -160,18 +160,6 @@ def extract_text_from_image(image_bytes):
         st.error(f"Error extracting text from image: {e}")
         return None
 
-# # Function to extract text from an image using EasyOCR
-# def extract_text_from_image(image_bytes):
-#     reader = Reader(['en'], gpu=False) # change language if needed
-#     try:
-#         with st.spinner("Extracting text from image..."):
-#             result = reader.readtext(image_bytes)
-#             extracted_text = '\n'.join([text[1] for text in result])
-#             return extracted_text
-#     except ValueError as e:
-#         st.error(f"Error extracting text from image: {e}")
-#         return None
-
 # Global variable to keep track of current LLM key index
 current_llm_key_index = 0
 
