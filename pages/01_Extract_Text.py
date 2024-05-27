@@ -4,6 +4,7 @@ import requests
 import re
 from st_copy_to_clipboard import st_copy_to_clipboard
 import PyPDF2
+import numpy as np
 import io
 import base64
 from easyocr import Reader
@@ -53,7 +54,7 @@ reader = load_easyocr_model()
 
 # Function to extract main body text from a URL
 def extract_text_from_url(url):
-    response = requests.get(url)
+    response = requests.get(url, stream=True) 
     content_type = response.headers.get('Content-Type')
     
     if 'application/pdf' in content_type:
@@ -62,9 +63,9 @@ def extract_text_from_url(url):
         pdf_reader = PyPDF2.PdfReader(pdf_file)
         return extract_text_from_pdf(pdf_reader, 1, len(pdf_reader.pages))
     elif content_type in ['image/png', 'image/jpeg', 'image/jpg']:
-        # If the URL points to an image, extract text from the image
-        image_file = io.BytesIO(response.content)
-        return extract_text_from_image(image_file)
+        # Read image data into bytes
+        image_bytes = response.content 
+        return extract_text_from_image(image_bytes) 
     else:
         # Otherwise, extract text from the HTML content
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -134,22 +135,19 @@ def extract_text_from_pdf_image(pdf_reader, page_num):
 
 # Function to extract text from an image using EasyOCR
 def extract_text_from_image(image_bytes):
-    reader = Reader(['en'], gpu=False) # change language if needed
+    reader = Reader(['en'], gpu=False)
     try:
         with st.spinner("Extracting text from image..."):
-            # Load image from bytes
             image = Image.open(io.BytesIO(image_bytes))
 
             # Downsize the image if it's larger than 720p
             if (image.width > 1920 and image.height > 1080) or (image.height > 1920 and image.width > 1080):
                 image = image.resize((image.width // 2, image.height // 2))
 
-            # Convert resized image back to bytes
-            img_byte_arr = io.BytesIO()
-            image.save(img_byte_arr, format='PNG')
-            img_byte_arr = img_byte_arr.getvalue()
+            # Convert PIL Image to NumPy array
+            image_np = np.array(image) 
 
-            result = reader.readtext(img_byte_arr)
+            result = reader.readtext(image_np)  # Pass the NumPy array 
             extracted_text = '\n'.join([text[1] for text in result])
             return extracted_text
     except ValueError as e:
