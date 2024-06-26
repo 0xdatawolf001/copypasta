@@ -8,11 +8,13 @@ import numpy as np
 import io
 import base64
 from easyocr import Reader
+from paddleocr import PaddleOCR, draw_ocr
 import fitz  # PyMuPDF
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
 import toml
 from urllib.parse import urlparse, parse_qs # Add for improved YouTube parsing
+
 
 # Function to extract YouTube video ID from URL (Improved)
 def extract_video_id(url):
@@ -137,26 +139,27 @@ def extract_text_from_pdf_image(pdf_reader, page_num):
         
         return text
 
-# Function to extract text from an image using EasyOCR
+# Function to extract text from an image using PaddleOCR
 def extract_text_from_image(image_bytes):
-    reader = Reader(['en'], gpu=False)
     try:
         with st.spinner("Extracting text from image..."):
             image = Image.open(io.BytesIO(image_bytes))
 
-            # Downsize the image if it's larger than 720p
+            # Downsize the image if it's larger than 720p (optional, but recommended)
             if (image.width > 1920 and image.height > 1080) or (image.height > 1920 and image.width > 1080):
                 image = image.resize((image.width // 2, image.height // 2))
 
-            # Convert PIL Image to NumPy array
+            # Convert PIL Image to NumPy array 
             image_np = np.array(image) 
 
-            result = reader.readtext(image_np)  # Pass the NumPy array 
-            extracted_text = '\n'.join([text[1] for text in result])
+            # Perform OCR using PaddleOCR
+            result = ocr.ocr(image_np, cls=False)
+            extracted_text = ' '.join([line[1][0] for line in result[0]])
             return extracted_text
     except ValueError as e:
         st.error(f"Error extracting text from image: {e}")
         return None
+
 
 
 # Global variable to keep track of current LLM key index
