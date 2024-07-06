@@ -14,3 +14,4 @@ google-generativeai
 asyncio
 paddleOCR
 paddlepaddle
+opencv-python
