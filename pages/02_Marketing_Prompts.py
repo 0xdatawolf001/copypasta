@@ -8,6 +8,7 @@ import numpy as np
 import io
 import base64
 from easyocr import Reader
+import cv2
 import fitz  # PyMuPDF
 from PIL import Image
 import google.generativeai as genai

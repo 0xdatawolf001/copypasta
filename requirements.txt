@@ -14,5 +14,6 @@ urllib3
 openai
 google-generativeai
 asyncio
+cv2
 # paddleOCR
 # paddlepaddle

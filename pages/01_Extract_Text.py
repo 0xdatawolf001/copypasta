@@ -8,6 +8,7 @@ import numpy as np
 import io
 import base64
 from easyocr import Reader
+import cv2
 from paddleocr import PaddleOCR, draw_ocr
 import fitz  # PyMuPDF
 from PIL import Image
