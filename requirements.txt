@@ -13,5 +13,3 @@ urllib3
 openai
 google-generativeai
 asyncio
-libgl1-mesa-glx
-libglib2.0-0
