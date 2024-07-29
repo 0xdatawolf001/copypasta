@@ -6,12 +6,12 @@ st_copy_to_clipboard
 PyPDF2
 PyMuPDF
 opencv-python-headless
-opencv-python
 easyocr
 pillow
 youtube-transcript-api
-opencv-contrib-python
 urllib3
 openai
 google-generativeai
 asyncio
+libgl1-mesa-glx
+libglib2.0-0
