@@ -80,23 +80,7 @@ def extract_text_from_url(url):
         # Extract text after expanding sections
         text = soup.get_text(separator=' ', strip=True)
         cleaned_text = re.sub(r'\s+', ' ', text) 
-
-        if cleaned_text == 'Just a moment... Enable JavaScript and cookies to continue':
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-
-            # Note: fetch_response does not take headers directly, so use requests as shown above
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                downloaded = fetch_response(url, decode=True)
-                cleaned_text = trafilatura.extract(downloaded.content)
-                return cleaned_text
-            else:
-                print(f"Failed to retrieve the URL: {response.status_code}. Probably it doesn't allow scraping")
-        
-        else:
-            return cleaned_text
+        return cleaned_text
 
 # Function to extract text from a PDF
 def extract_text_from_pdf(pdf_reader, start_page, end_page):
