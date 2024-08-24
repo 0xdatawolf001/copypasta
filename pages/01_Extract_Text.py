@@ -341,10 +341,10 @@ if "main_text" in st.session_state:
 add_prefix = st.checkbox("Add Prefix Prompt Paragraph")
 
 # Default prefix text
-default_prefix = (
-    "Extract the key insights and takeaways. Write in point form and organize section in headers. "
-    "Make sure it is comprehensive and complete and you don’t lose out important information. "
-    "At the end, have a call to action on the next steps based on what the write up suggests.")
+default_prefix = ("""
+                  Read the content above slowly and take your time to understand it. Think through carefully step by step. Extract the key insights and takeaways a few paragraphs at a time instead of looking at everything. Write in point form and organize section in headers. Let the bullet points flow and avoid writing too short because the context is lost and you may end up making the content even harder to understand. Make sure it is comprehensive and complete and you don’t lose out important information. Note that you should not be writing an outline, I am learning from the content
+                  
+                  """)
 
 # Text area for prefix if checkbox is checked
 if add_prefix:
